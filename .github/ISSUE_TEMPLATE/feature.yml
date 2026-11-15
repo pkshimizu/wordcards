@@ -21,6 +21,13 @@ body:
     validations:
       required: true
   - type: textarea
+    id: screen
+    attributes:
+      label: 画面の URL・文言
+      description: 対象の画面の URL（例：/cards/new）と、ボタンや見出しなど画面に出す文言。テストはこの文言で要素を探す
+    validations:
+      required: true
+  - type: textarea
     id: out-of-scope
     attributes:
       label: 対象外
