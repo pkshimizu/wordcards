@@ -1,0 +1,2 @@
+# Windows でも改行を LF に揃える（core.autocrlf の設定に左右されないようにする）
+* text=auto eol=lf

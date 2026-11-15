@@ -1,0 +1,29 @@
+name: 機能
+description: conductor に作ってもらう機能。受け入れ条件は Given/When/Then で書く
+body:
+  - type: textarea
+    id: purpose
+    attributes:
+      label: 目的
+      description: なぜこの機能が必要か
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 受け入れ条件（AC）
+      description: 1件ずつ Given（前提）/ When（操作）/ Then（結果）で書く。テスト役がこれを Playwright のテストにする
+      value: |
+        - AC1
+          - Given
+          - When
+          - Then
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: 対象外
+      description: この Issue ではやらないこと
+    validations:
+      required: true
