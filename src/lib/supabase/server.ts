@@ -7,8 +7,10 @@ import { requireSupabaseEnv } from "./env";
  * リクエストごとに作る（クッキーがリクエストごとに違うため）。
  */
 export async function createClient() {
-  const { url, publishableKey } = requireSupabaseEnv();
+  // 先に cookies() を呼ぶ。これでビルド時の事前レンダリングはここで止まり、
+  // 環境変数の確認はリクエスト時だけ行われる（ビルド環境に Supabase の設定が無くてもよい）。
   const cookieStore = await cookies();
+  const { url, publishableKey } = requireSupabaseEnv();
 
   return createServerClient(url, publishableKey, {
     cookies: {
