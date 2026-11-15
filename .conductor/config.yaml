@@ -20,6 +20,7 @@ commands:
   acceptance: npm run test:e2e
   typecheck: npm run typecheck
   build: npm run build
+  format: npm run format # テスト役のコミット前に整形する（保護ファイルを整形済みにしておく）
 
 # 受け入れテストで各 AC の画面を撮って、レビュー役に見せる（git には入れない）
 screenshots: screenshots
