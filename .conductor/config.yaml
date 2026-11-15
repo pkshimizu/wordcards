@@ -26,7 +26,7 @@ commands:
 screenshots: screenshots
 
 merge:
-  approval: auto # 一時的に auto（conductor #11 の通し確認）。終わったら human に戻す
+  approval: human # マージの前に人が承認する
 
 roles:
   implementer:
