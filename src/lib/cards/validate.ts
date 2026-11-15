@@ -9,7 +9,8 @@ export type CardErrors = {
 };
 
 export type ValidateResult =
-  { ok: true; value: CardInput } | { ok: false; errors: CardErrors };
+  | { ok: true; value: CardInput }
+  | { ok: false; errors: CardErrors };
 
 function toText(value: FormDataEntryValue | null | undefined): string {
   return typeof value === "string" ? value.trim() : "";
