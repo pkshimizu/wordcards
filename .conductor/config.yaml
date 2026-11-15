@@ -1,0 +1,37 @@
+# conductor の設定（https://github.com/pkshimizu/conductor）
+# 点検: npx conductor check .
+
+github:
+  repo: pkshimizu/wordcards
+  project: 18 # GitHub Projects「wordcards」
+  notify: pkshimizu # Blocked や承認待ちのときにメンションする人
+  # 状態欄（Status）の名前は既定どおり
+  # Ready / Testing / Implementing / Reviewing / Done / Blocked
+
+# 実装役が変えてはいけないファイル（テスト役だけが書く）
+protected:
+  - e2e/**
+  - supabase/seed.sql
+
+# 事前に npm run db:start と npm run db:env を済ませておくこと
+commands:
+  setup: npm run db:reset # DB を空にして migration と seed を入れ直す
+  test: npm test
+  acceptance: npm run test:e2e
+  typecheck: npm run typecheck
+  build: npm run build
+
+# 受け入れテストで各 AC の画面を撮って、レビュー役に見せる（git には入れない）
+screenshots: screenshots
+
+merge:
+  approval: human # PR に /conductor approve とコメントしてからマージ
+
+roles:
+  implementer:
+    # CI で lint と整形の点検をするので、実装役にも直させる
+    allow:
+      - Bash(npm run lint)
+      - Bash(npm run lint *)
+      - Bash(npm run format)
+      - Bash(npm run format:check)
