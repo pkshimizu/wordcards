@@ -11,7 +11,11 @@ export default async function CardsPage() {
     .select("id, front, back")
     .order("created_at", { ascending: true })
     .order("id", { ascending: true });
-  if (error) throw new Error(`カードを読み込めませんでした: ${error.message}`);
+  if (error) {
+    // 詳しい内容はサーバーのログにだけ残し、利用者には固定の文言を出す
+    console.error("カードの読み込みに失敗しました", error);
+    throw new Error("カードを読み込めませんでした");
+  }
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-12">
