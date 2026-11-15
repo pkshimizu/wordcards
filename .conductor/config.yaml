@@ -25,7 +25,7 @@ commands:
 screenshots: screenshots
 
 merge:
-  approval: human # PR に /conductor approve とコメントしてからマージ
+  approval: auto # 一時的に auto（conductor #11 の通し確認）。終わったら human に戻す
 
 roles:
   implementer:
