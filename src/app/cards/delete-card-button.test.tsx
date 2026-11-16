@@ -12,7 +12,9 @@ describe("DeleteCardButton", () => {
     await userEvent.click(screen.getByRole("button", { name: "削除" }));
 
     expect(screen.getByText("削除しますか？")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "削除する" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "削除する" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "やめる" })).toBeInTheDocument();
   });
 
