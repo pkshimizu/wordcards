@@ -2,6 +2,7 @@ import Form from "next/form";
 
 import { createClient } from "@/lib/supabase/server";
 
+import { deleteCard } from "./actions";
 import { CardList } from "./card-list";
 
 export default async function CardsPage() {
@@ -31,7 +32,7 @@ export default async function CardsPage() {
           </button>
         </Form>
       </div>
-      <CardList cards={data ?? []} />
+      <CardList cards={data ?? []} deleteAction={deleteCard} />
     </main>
   );
 }
