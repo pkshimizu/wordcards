@@ -7,3 +7,8 @@
 -- Issue #3（カードを削除する）: カードは入れない。
 -- Issue #2 の AC1 と両立させるため、削除の前提になるカードは
 -- e2e/delete-cards.spec.ts の各テストが /cards/new から追加する。
+
+-- Issue #4（カードを検索する）: カードは入れない。
+-- Issue #2 の AC1 と両立させるため、検索の前提になるカード
+-- 「apple／りんご」「banana／バナナ」は e2e/search-cards.spec.ts の各テストが
+-- まだ無ければ /cards/new から追加する。
