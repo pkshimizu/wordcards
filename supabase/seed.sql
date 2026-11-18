@@ -12,3 +12,8 @@
 -- Issue #2 の AC1 と両立させるため、検索の前提になるカード
 -- 「apple／りんご」「banana／バナナ」は e2e/search-cards.spec.ts の各テストが
 -- まだ無ければ /cards/new から追加する。
+
+-- Issue #13（カードで出題する）: カードは入れない。
+-- Issue #2 の AC1 と両立させるため、出題の前提になるカード
+-- 「quiz-banana／バナナ」「quiz-apple／りんご」は e2e/quiz.spec.ts の各テストが
+-- この順に /cards/new から追加する（新しい順の出題で quiz-apple が1問目になる）。
