@@ -100,6 +100,58 @@ describe("Quiz", () => {
     expect(screen.getByText("apple")).toBeInTheDocument();
   });
 
+  it("答え合わせのたびに結果を保存し、保存が終わってから結果を表示する", async () => {
+    let resolve: (value: { error?: string }) => void = () => {};
+    const saveResult = vi.fn(
+      () =>
+        new Promise<{ error?: string }>((r) => {
+          resolve = r;
+        }),
+    );
+    render(<Quiz cards={cards} saveResult={saveResult} />);
+    answer("みかん");
+    expect(saveResult).toHaveBeenCalledWith(2, false);
+    expect(
+      screen.queryByText("不正解（正しい答え：りんご）"),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "答え合わせ" })).toBeDisabled();
+
+    resolve({});
+    expect(
+      await screen.findByText("不正解（正しい答え：りんご）"),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("保存に失敗したら結果に添えてその旨を表示する", async () => {
+    const saveResult = vi.fn(async () => ({
+      error: "答えの結果を保存できませんでした",
+    }));
+    render(<Quiz cards={cards} saveResult={saveResult} />);
+    answer("りんご");
+    expect(await screen.findByText("正解")).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "答えの結果を保存できませんでした",
+    );
+    expect(saveResult).toHaveBeenCalledWith(2, true);
+  });
+
+  it("emptyMessage と restartHref を指定できる", () => {
+    const { unmount } = render(
+      <Quiz cards={[]} emptyMessage="復習するカードはありません" />,
+    );
+    expect(screen.getByText("復習するカードはありません")).toBeInTheDocument();
+    unmount();
+
+    render(<Quiz cards={cards} restartHref="/review" />);
+    answer("りんご");
+    fireEvent.click(screen.getByRole("button", { name: "終わる" }));
+    expect(screen.getByRole("link", { name: "もう一度" })).toHaveAttribute(
+      "href",
+      "/review",
+    );
+  });
+
   it("カードが1枚もなければ「カードがありません」と表示する", () => {
     render(<Quiz cards={[]} />);
     expect(screen.getByText("カードがありません")).toBeInTheDocument();
