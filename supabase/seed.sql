@@ -17,3 +17,8 @@
 -- Issue #2 の AC1 と両立させるため、出題の前提になるカード
 -- 「quiz-banana／バナナ」「quiz-apple／りんご」は e2e/quiz.spec.ts の各テストが
 -- この順に /cards/new から追加する（新しい順の出題で quiz-apple が1問目になる）。
+
+-- Issue #12（カードを編集する）: カードは入れない。
+-- Issue #2 の AC1 と両立させるため、編集の前提になるカード（Issue の「aple／りんご」）は
+-- e2e/edit-cards.spec.ts の各テストが /cards/new から追加する。
+-- 他の spec のカードとぶつからないよう、表・裏は「edit-AC{n}-」で始まる文言にしている。

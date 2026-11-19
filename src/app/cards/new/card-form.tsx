@@ -1,23 +1,30 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 
 import type { CreateCardState } from "./actions";
-
-const initialState: CreateCardState = {
-  errors: {},
-  values: { front: "", back: "" },
-};
 
 type Props = {
   action: (
     prev: CreateCardState,
     formData: FormData,
   ) => Promise<CreateCardState>;
+  /** 入力欄に最初から入れておく値（編集のとき） */
+  initialValues?: CreateCardState["values"];
+  /** 指定すると「やめる」リンクを出す */
+  cancelHref?: string;
 };
 
-export function CardForm({ action }: Props) {
-  const [state, formAction, pending] = useActionState(action, initialState);
+export function CardForm({
+  action,
+  initialValues = { front: "", back: "" },
+  cancelHref,
+}: Props) {
+  const [state, formAction, pending] = useActionState(action, {
+    errors: {},
+    values: initialValues,
+  });
   const { errors, values } = state;
 
   return (
@@ -65,13 +72,20 @@ export function CardForm({ action }: Props) {
           {errors.form}
         </p>
       )}
-      <button
-        type="submit"
-        disabled={pending}
-        className="self-start rounded bg-zinc-900 px-4 py-2 text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
-      >
-        保存
-      </button>
+      <div className="flex items-center gap-4">
+        <button
+          type="submit"
+          disabled={pending}
+          className="rounded bg-zinc-900 px-4 py-2 text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+        >
+          保存
+        </button>
+        {cancelHref && (
+          <Link href={cancelHref} className="underline">
+            やめる
+          </Link>
+        )}
+      </div>
     </form>
   );
 }
