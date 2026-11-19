@@ -7,32 +7,55 @@ import { isCorrect } from "./grade";
 
 export type QuizCard = { id: number; front: string; back: string };
 
-type Props = { cards: QuizCard[] };
+/** 答え合わせの結果を保存する。失敗したら error に利用者向けの文言を入れて返す */
+export type SaveResult = (
+  cardId: number,
+  correct: boolean,
+) => Promise<{ error?: string }>;
+
+type Props = {
+  cards: QuizCard[];
+  /** 出題するカードが無いときの文言 */
+  emptyMessage?: string;
+  /** 終わったあとの「もう一度」の行き先 */
+  restartHref?: string;
+  /** 答え合わせのたびに呼ぶ。結果は保存が終わってから表示する */
+  saveResult?: SaveResult;
+};
 
 const buttonClass =
-  "self-start rounded bg-zinc-900 px-4 py-2 text-white dark:bg-zinc-100 dark:text-zinc-900";
+  "self-start rounded bg-zinc-900 px-4 py-2 text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900";
 const subButtonClass =
   "self-start rounded border border-zinc-300 px-4 py-2 dark:border-zinc-700";
 
-export function Quiz({ cards }: Props) {
+const SAVE_ERROR = "答えの結果を保存できませんでした";
+
+export function Quiz({
+  cards,
+  emptyMessage = "カードがありません",
+  restartHref = "/quiz",
+  saveResult,
+}: Props) {
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState("");
   // 今の問題の答え合わせの結果。答え合わせ前は null
   const [result, setResult] = useState<boolean | null>(null);
+  // 結果を保存している途中か
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [answeredCount, setAnsweredCount] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [finished, setFinished] = useState(false);
 
   if (cards.length === 0) {
-    return (
-      <p className="text-zinc-600 dark:text-zinc-400">カードがありません</p>
-    );
+    return <p className="text-zinc-600 dark:text-zinc-400">{emptyMessage}</p>;
   }
 
   function restart() {
     setIndex(0);
     setAnswer("");
     setResult(null);
+    setSaveError(null);
     setAnsweredCount(0);
     setCorrectCount(0);
     setFinished(false);
@@ -45,7 +68,7 @@ export function Quiz({ cards }: Props) {
           {answeredCount}問中{correctCount}問正解
         </p>
         <div className="flex gap-4">
-          <Link href="/quiz" onClick={restart} className="underline">
+          <Link href={restartHref} onClick={restart} className="underline">
             もう一度
           </Link>
           <Link href="/cards" className="underline">
@@ -59,13 +82,31 @@ export function Quiz({ cards }: Props) {
   const card = cards[index];
   const isLast = index === cards.length - 1;
 
-  function check(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (result !== null) return;
-    const correct = isCorrect(answer, card.back);
+  function showResult(correct: boolean) {
     setResult(correct);
     setAnsweredCount((n) => n + 1);
     if (correct) setCorrectCount((n) => n + 1);
+  }
+
+  async function check(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (result !== null || saving) return;
+    const correct = isCorrect(answer, card.back);
+    if (!saveResult) {
+      showResult(correct);
+      return;
+    }
+    // 保存が終わってから結果を出す（結果が見えた時点で保存済みにするため）
+    setSaving(true);
+    let error: string | undefined;
+    try {
+      ({ error } = await saveResult(card.id, correct));
+    } catch {
+      error = SAVE_ERROR;
+    }
+    setSaving(false);
+    setSaveError(error ?? null);
+    showResult(correct);
   }
 
   function next() {
@@ -76,6 +117,7 @@ export function Quiz({ cards }: Props) {
     setIndex((i) => i + 1);
     setAnswer("");
     setResult(null);
+    setSaveError(null);
   }
 
   return (
@@ -92,13 +134,13 @@ export function Quiz({ cards }: Props) {
             type="text"
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
-            readOnly={result !== null}
+            readOnly={result !== null || saving}
             autoComplete="off"
             className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700"
           />
         </div>
         {result === null && (
-          <button type="submit" className={buttonClass}>
+          <button type="submit" disabled={saving} className={buttonClass}>
             答え合わせ
           </button>
         )}
@@ -108,6 +150,11 @@ export function Quiz({ cards }: Props) {
           <p role="status" className="text-lg font-medium">
             {result ? "正解" : `不正解（正しい答え：${card.back}）`}
           </p>
+          {saveError && (
+            <p role="alert" className="text-red-600 dark:text-red-400">
+              {saveError}
+            </p>
+          )}
           <div className="flex gap-4">
             <button type="button" onClick={next} className={buttonClass}>
               {isLast ? "結果を見る" : "次へ"}

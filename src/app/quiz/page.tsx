@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 
+import { saveResult } from "./actions";
 import { Quiz } from "./quiz";
 
 export default async function QuizPage() {
@@ -19,7 +20,7 @@ export default async function QuizPage() {
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-12">
       <h1 className="text-2xl font-semibold tracking-tight">出題</h1>
-      <Quiz cards={data ?? []} />
+      <Quiz cards={data ?? []} saveResult={saveResult} />
     </main>
   );
 }

@@ -22,3 +22,9 @@
 -- Issue #2 の AC1 と両立させるため、編集の前提になるカード（Issue の「aple／りんご」）は
 -- e2e/edit-cards.spec.ts の各テストが /cards/new から追加する。
 -- 他の spec のカードとぶつからないよう、表・裏は「edit-AC{n}-」で始まる文言にしている。
+
+-- Issue #14（間違えたカードを復習する）: カードも答えの結果も入れない。
+-- Issue #2 の AC1 と両立させるため、復習の前提になるカード
+-- 「review-apple／りんご」「review-banana／バナナ」は e2e/review.spec.ts の各テストが
+-- /cards/new から追加し、/quiz・/review で答えて結果を作る。
+-- 前のテストのカードが残らないよう、各テストの最初に /cards からこの2つを削除する。
