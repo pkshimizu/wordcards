@@ -1,9 +1,17 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type { ComponentProps } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import type { CreateCardState } from "./actions";
 import { CardForm } from "./card-form";
+
+// ルーターの無いテスト環境では、Link をふつうの <a> に置き換える
+vi.mock("next/link", () => ({
+  default: ({ children, ...rest }: ComponentProps<"a">) => (
+    <a {...rest}>{children}</a>
+  ),
+}));
 
 describe("CardForm", () => {
   it("表・裏の入力欄と保存ボタンを表示する", () => {
@@ -33,5 +41,30 @@ describe("CardForm", () => {
     expect(formData.get("front")).toBe("");
     expect(formData.get("back")).toBe("りんご");
     expect(screen.getByLabelText("裏")).toHaveValue("りんご");
+  });
+
+  it("initialValues を渡すと入力欄に最初から入れておく", () => {
+    render(
+      <CardForm
+        action={vi.fn()}
+        initialValues={{ front: "aple", back: "りんご" }}
+      />,
+    );
+    expect(screen.getByLabelText("表")).toHaveValue("aple");
+    expect(screen.getByLabelText("裏")).toHaveValue("りんご");
+  });
+
+  it("cancelHref を渡したときだけ「やめる」リンクを出す", () => {
+    const { unmount } = render(<CardForm action={vi.fn()} />);
+    expect(
+      screen.queryByRole("link", { name: "やめる" }),
+    ).not.toBeInTheDocument();
+    unmount();
+
+    render(<CardForm action={vi.fn()} cancelHref="/cards" />);
+    expect(screen.getByRole("link", { name: "やめる" })).toHaveAttribute(
+      "href",
+      "/cards",
+    );
   });
 });
