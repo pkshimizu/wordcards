@@ -20,3 +20,11 @@ merge:
 
 limits:
   agents: 2 # 同時に動かす作業エージェントの数
+
+# 作業フォルダ（git worktree）を用意したあとに Tasuki が実行する準備
+workspace:
+  setup:
+    - npm ci
+    - npm run db:env # ローカルの Supabase の接続先を .env.local に書き出す
+  setup_on_change:
+    - package-lock.json
