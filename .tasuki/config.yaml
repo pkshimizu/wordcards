@@ -28,3 +28,4 @@ workspace:
     - npm run db:env # ローカルの Supabase の接続先を .env.local に書き出す
   setup_on_change:
     - package-lock.json
+poll_interval: 45
