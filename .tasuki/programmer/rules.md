@@ -1,9 +1,6 @@
 ## 作業フォルダの準備
 
-作業フォルダは新しい git worktree で、依存パッケージと接続先の設定がありません。最初に次を実行します。
-
-- `npm ci`
-- `npm run db:env`（ローカルの Supabase の接続先を `.env.local` に書き出す。Supabase はこの PC で起動済み）
+作業フォルダは git worktree です。依存パッケージの導入（`npm ci`）と、ローカルの Supabase の接続先の書き出し（`npm run db:env`）は、Tasuki が実行済みです（指示書の最後に結果が書かれます）。失敗したと書かれていたら、原因を確かめて自分で実行します。Supabase はこの PC で起動済みです。
 
 ## 技術の前提
 
