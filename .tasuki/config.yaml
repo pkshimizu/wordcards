@@ -1,0 +1,22 @@
+# Tasuki の設定（https://github.com/pkshimizu/tasuki）
+# 点検: tasuki check .
+
+github:
+  repo: pkshimizu/wordcards
+
+discord:
+  channels:
+    requirements: "1572949801748791358" # 要件チャンネル
+    questions: "1572949822011609099" # 質問チャンネル
+    notices: "1572949844459524276" # お知らせチャンネル
+  allowed_users:
+    - "714417294549450753"
+
+# 工程ごとに auto（CI が合格したら Tasuki がマージ）か human（人が GitHub でマージ）
+merge:
+  spec: human
+  design: human
+  implementation: human
+
+limits:
+  agents: 2 # 同時に動かす作業エージェントの数
